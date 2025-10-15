@@ -3,7 +3,9 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -22,12 +24,27 @@ const ProtectedRoute = ({ children, userType }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <motion.div 
+        className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <motion.div
+            className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-4"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.p 
+            className="text-gray-600 text-lg"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            Loading amazing experiences...
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -69,11 +86,34 @@ const PublicRoute = ({ children }) => {
 };
 
 function AppContent() {
+  const location = useLocation();
+  
+  const pageVariants = {
+    initial: { opacity: 0, y: 20, scale: 0.98 },
+    in: { opacity: 1, y: 0, scale: 1 },
+    out: { opacity: 0, y: -20, scale: 1.02 }
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.4
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-blue-50">
       <Navbar />
-      <main className="flex-grow">
-        <Routes>
+      <AnimatePresence mode="wait">
+        <motion.main 
+          key={location.pathname}
+          className="flex-grow"
+          initial="initial"
+          animate="in"
+          exit="out"
+          variants={pageVariants}
+          transition={pageTransition}
+        >
+          <Routes location={location}>
           <Route path={routes.home} element={<Home />} />
           <Route path={routes.ngo.find} element={<FindNGOs />} />
           <Route path={routes.contact} element={<Contact />} />
@@ -116,8 +156,9 @@ function AppContent() {
 
           {/* Catch all route */}
           <Route path="*" element={<Navigate to={routes.home} replace />} />
-        </Routes>
-      </main>
+          </Routes>
+        </motion.main>
+      </AnimatePresence>
       <Footer />
     </div>
   );
