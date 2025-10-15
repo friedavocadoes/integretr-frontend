@@ -321,46 +321,7 @@ const Home = () => {
               {" to start making a difference in your community"}
             </motion.p>
 
-            {/* Stats Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              viewport={{ once: true }}
-              className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
-            >
-              {[
-                { number: '500+', label: 'NGOs Connected', icon: Target },
-                { number: '10K+', label: 'Volunteers Active', icon: Users },
-                { number: '50K+', label: 'Lives Impacted', icon: Zap }
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100"
-                >
-                  <motion.div
-                    className="flex items-center justify-center mb-3"
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  >
-                    <stat.icon className="h-8 w-8 text-primary-600" />
-                  </motion.div>
-                  <motion.div
-                    className="text-3xl font-bold text-gray-900 mb-1"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 0.8 + index * 0.1 }}
-                  >
-                    {stat.number}
-                  </motion.div>
-                  <div className="text-gray-600 text-sm">{stat.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
+
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -524,27 +485,7 @@ const Home = () => {
                       ))}
                     </motion.div>
 
-                    {/* Action Button */}
-                    <motion.button
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, delay: index * 0.2 + 1.2 }}
-                      whileHover={{ 
-                        scale: 1.05,
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
-                      }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`mt-6 px-6 py-3 bg-gradient-to-r ${feature.color} text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105`}
-                    >
-                      Get Started
-                      <motion.span
-                        className="inline-block ml-2"
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <ArrowRight className="h-4 w-4" />
-                      </motion.span>
-                    </motion.button>
+
                   </div>
 
                   {/* Number Badge */}
