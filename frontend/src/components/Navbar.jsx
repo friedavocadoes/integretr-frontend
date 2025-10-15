@@ -30,19 +30,19 @@ const Navbar = () => {
               to={routes.home}
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
-              Home
+              Discover
             </Link>
             <Link
               to={routes.ngo.find}
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
-              Find NGOs
+              Explore NGOs
             </Link>
             <Link
               to={routes.contact}
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
-              Contact
+              Get in Touch
             </Link>
 
             {isAuthenticated ? (
@@ -70,13 +70,13 @@ const Navbar = () => {
                   to={routes.ngo.login}
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
-                  NGO Login
+                  NGO Portal
                 </Link>
                 <Link
                   to={routes.volunteer.login}
                   className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
                 >
-                  Volunteer Login
+                  Join as Volunteer
                 </Link>
               </div>
             )}

@@ -10,9 +10,13 @@ const FindNGOs = () => {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || '',
+    state: searchParams.get('state') || '',
     city: searchParams.get('city') || '',
     useLocation: false
   });
+
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
   const categories = [
     'Education', 'Health', 'Animal Welfare', 'Environment', 
@@ -20,14 +24,53 @@ const FindNGOs = () => {
   ];
 
   useEffect(() => {
+    ngoAPI.getStates().then(res => setStates(res.data));
+    // Load all cities initially
+    const stateForCities = filters.state || undefined;
+    ngoAPI.getCities(stateForCities).then(res => setCities(res.data));
     searchNGOs();
   }, []);
+
+  useEffect(() => {
+    if (filters.state) {
+      ngoAPI.getCities(filters.state).then(res => setCities(res.data));
+    } else {
+      // When no state selected, show all cities
+      ngoAPI.getCities().then(res => setCities(res.data));
+    }
+  }, [filters.state]);
+
+  // When Use my location toggles, trigger a location-based search immediately
+  useEffect(() => {
+    if (filters.useLocation && navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const response = await ngoAPI.search({
+            category: filters.category || undefined,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setNgos(response.data);
+          setLoading(false);
+        },
+        (err) => {
+          console.error('Geolocation error:', err);
+          setFilters(prev => ({ ...prev, useLocation: false }));
+          setLoading(false);
+          alert('Unable to access location. Please allow location permission or try manual search.');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+  }, [filters.useLocation]);
 
   const searchNGOs = async () => {
     setLoading(true);
     try {
       const params = {};
       if (filters.category) params.category = filters.category;
+      if (filters.state) params.state = filters.state;
       if (filters.city) params.city = filters.city;
       
       if (filters.useLocation && navigator.geolocation) {
@@ -50,7 +93,12 @@ const FindNGOs = () => {
   };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    // If state changes, reset city to avoid stale mismatches
+    if (key === 'state') {
+      setFilters(prev => ({ ...prev, state: value, city: '' }));
+    } else {
+      setFilters(prev => ({ ...prev, [key]: value }));
+    }
     
     // Update URL params
     const newParams = new URLSearchParams(searchParams);
@@ -80,7 +128,7 @@ const FindNGOs = () => {
           {/* Search and Filter Section */}
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
             <form onSubmit={handleSearch} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
@@ -92,12 +140,25 @@ const FindNGOs = () => {
                   ))}
                 </select>
 
+                <select
+                  value={filters.state}
+                  onChange={(e) => handleFilterChange('state', e.target.value)}
+                  disabled={filters.useLocation}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 disabled:bg-gray-100"
+                >
+                  <option value="">All States</option>
+                  {states.map(state => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+
                 <input
                   type="text"
                   placeholder="Enter city"
                   value={filters.city}
                   onChange={(e) => handleFilterChange('city', e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                  disabled={filters.useLocation}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 disabled:bg-gray-100"
                 />
 
                 <label className="flex items-center space-x-2">
@@ -144,7 +205,11 @@ const FindNGOs = () => {
 
                   <div className="flex items-center text-gray-500 mb-4">
                     <MapPin className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{ngo.location.city}, {ngo.location.state}</span>
+                    <span className="text-sm">{ngo.location.city}, {ngo.location.state}
+                      {typeof ngo.distanceKm === 'number' && (
+                        <span className="ml-2 text-xs text-gray-500">• {ngo.distanceKm.toFixed(1)} km away</span>
+                      )}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between">

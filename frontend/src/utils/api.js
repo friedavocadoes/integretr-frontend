@@ -5,7 +5,7 @@ const mockNGOs = [
     name: 'Education for All Foundation',
     category: 'Education',
     description: 'Providing quality education to underprivileged children across rural areas.',
-    location: { city: 'Delhi', state: 'Delhi' },
+    location: { city: 'Delhi', state: 'Delhi', lat: 28.6139, lng: 77.209 },
     contact: { website: 'https://educationforall.org' },
     requirements: [
       {
@@ -24,7 +24,7 @@ const mockNGOs = [
     name: 'Green Earth Initiative',
     category: 'Environment',
     description: 'Working towards environmental conservation and sustainable development.',
-    location: { city: 'Mumbai', state: 'Maharashtra' },
+    location: { city: 'Mumbai', state: 'Maharashtra', lat: 19.076, lng: 72.8777 },
     contact: { website: 'https://greenearth.org' },
     requirements: [
       {
@@ -43,7 +43,7 @@ const mockNGOs = [
     name: 'Health Care Heroes',
     category: 'Health',
     description: 'Providing healthcare services to remote and underserved communities.',
-    location: { city: 'Bangalore', state: 'Karnataka' },
+    location: { city: 'Bangalore', state: 'Karnataka', lat: 12.9716, lng: 77.5946 },
     contact: { website: 'https://healthcareheroes.org' },
     requirements: [
       {
@@ -69,6 +69,65 @@ const mockUsers = {
 };
 
 const mockApplications = [];
+
+// Haversine utility (km)
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const toRad = (d) => (d * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Full list of Indian states (29 as requested)
+const INDIA_STATES = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jammu and Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal'
+];
+
+function listStates() {
+  return INDIA_STATES;
+}
+
+function listCities(state) {
+  return Array.from(new Set(
+    mockNGOs
+      .filter(n => (state ? n.location.state === state : true))
+      .map(n => n.location.city)
+  )).sort();
+}
 
 export const authAPI = {
   ngoRegister: (data) => Promise.resolve({ 
@@ -103,11 +162,27 @@ export const ngoAPI = {
     if (params.category && params.category !== 'all') {
       filtered = filtered.filter(ngo => ngo.category === params.category);
     }
+    if (params.state) {
+      filtered = filtered.filter(ngo => ngo.location.state === params.state);
+    }
     if (params.city) {
       filtered = filtered.filter(ngo => 
         ngo.location.city.toLowerCase().includes(params.city.toLowerCase())
       );
     }
+
+    if (typeof params?.lat === 'number' && typeof params?.lng === 'number') {
+      filtered = filtered
+        .map(ngo => {
+          const { lat, lng } = ngo.location;
+          const distanceKm = (typeof lat === 'number' && typeof lng === 'number')
+            ? haversineKm(params.lat, params.lng, lat, lng)
+            : null;
+          return { ...ngo, distanceKm };
+        })
+        .sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+    }
+
     return Promise.resolve({ data: filtered });
   },
   getDetails: (id) => Promise.resolve({ 
@@ -125,6 +200,8 @@ export const ngoAPI = {
   updateApplicationStatus: () => Promise.resolve({ 
     data: { message: 'Application status updated' } 
   }),
+  getStates: () => Promise.resolve({ data: listStates() }),
+  getCities: (state) => Promise.resolve({ data: listCities(state) }),
 };
 
 export const volunteerAPI = {

@@ -33,11 +33,10 @@ const Home = () => {
             className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Find NGOs That Match Your{' '}
-              <span className="text-primary-600">Passion</span>
+            Find Your Cause. Change Lives. Start Today
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Connect. Volunteer. Create Impact. Join thousands of volunteers making a difference in communities worldwide.
+            Local NGOs. Real needs. Your skills. Perfect match
             </p>
 
             {/* Search Form */}
@@ -92,7 +91,7 @@ const Home = () => {
               How NGOConnect Works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Simple steps to start making a difference in your community
+            Making an impact has never been this easy
             </p>
           </motion.div>
 
@@ -144,7 +143,7 @@ const Home = () => {
               Ready to Make a Difference?
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join our community of volunteers and NGOs working together for positive change
+            Be part of a powerful network of volunteers and NGOs driving meaningful change.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button

@@ -13,9 +13,7 @@ const Footer = () => {
               <span className="text-xl font-bold">NGOConnect</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
-              Connecting passionate volunteers with meaningful NGO
-              opportunities. Together, we create lasting impact in communities
-              worldwide.
+            Whether you have 2 hours or 2 days—there's an NGO near you that needs your help
             </p>
             <div className="flex space-x-4">
               <a
