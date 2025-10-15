@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MapPin, Search } from "lucide-react";
 import routes from "../content/routes";
@@ -9,6 +9,26 @@ const SearchNGO = () => {
   const [query, setQuery] = useState("");
   const [locStatus, setLocStatus] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Autofill the form from URL params when available (e.g. ?type=name&name=underprivileged)
+    const params = new URLSearchParams(location.search);
+    const type = params.get("type");
+    if (type) {
+      if (type === "name") {
+        const name = params.get("name") || "";
+        setSearchType("name");
+        setQuery(name);
+      } else if (type === "location") {
+        // For location searches the results page may contain lat/lng. If a city param exists, use it to fill the input.
+        setSearchType("location");
+        const city = params.get("city");
+        if (city) setQuery(city);
+      }
+    }
+    // run this effect whenever the location.search changes
+  }, [location.search]);
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
