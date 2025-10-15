@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Heart, LogOut, User } from 'lucide-react';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Heart, LogOut, User } from "lucide-react";
+import routes from "../content/routes";
 
 const Navbar = () => {
   const { user, userType, logout, isAuthenticated } = useAuth();
@@ -8,7 +9,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -16,27 +17,40 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to={routes.home} className="flex items-center space-x-2">
               <Heart className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-900">NGOConnect</span>
+              <span className="text-xl font-bold text-gray-900">
+                NGOConnect
+              </span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-primary-600 transition-colors">
+            <Link
+              to={routes.home}
+              className="text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Home
             </Link>
-            <Link to="/find-ngos" className="text-gray-700 hover:text-primary-600 transition-colors">
+            <Link
+              to={routes.ngo.find}
+              className="text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Find NGOs
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors">
+            <Link
+              to={routes.contact}
+              className="text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Contact
             </Link>
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <Link 
-                  to={userType === 'ngo' ? '/ngo-dashboard' : '/volunteer-dashboard'}
+                <Link
+                  to={
+                    userType === "ngo" ? routes.ngo.dash : routes.volunteer.dash
+                  }
                   className="flex items-center space-x-1 text-gray-700 hover:text-primary-600 transition-colors"
                 >
                   <User className="h-4 w-4" />
@@ -53,13 +67,13 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link
-                  to="/ngo-login"
+                  to={routes.ngo.login}
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
                   NGO Login
                 </Link>
                 <Link
-                  to="/volunteer-login"
+                  to={routes.volunteer.login}
                   className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   Volunteer Login
