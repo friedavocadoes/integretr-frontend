@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { MapPin, Search } from "lucide-react";
 import routes from "../content/routes";
 
 const SearchNGO = () => {
-  const [searchType, setSearchType] = useState("name"); // "name" | "location"
+  const [searchType, setSearchType] = useState("name");
   const [query, setQuery] = useState("");
   const [locStatus, setLocStatus] = useState("");
   const navigate = useNavigate();
@@ -20,8 +22,6 @@ const SearchNGO = () => {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         setLocStatus("Location fetched ✅");
-
-        // redirect directly using lat/lon
         navigate(
           `${routes.ngo.find}?type=location&lat=${latitude}&lng=${longitude}`
         );
@@ -33,7 +33,6 @@ const SearchNGO = () => {
     );
   };
 
-  // Convert city name → coordinates
   const getCoordinatesFromCity = async (city) => {
     try {
       const res = await fetch(
@@ -79,54 +78,69 @@ const SearchNGO = () => {
   };
 
   return (
-    <form
+    <motion.form
       onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row gap-3 items-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="max-w-2xl mx-auto bg-white/70 backdrop-blur-xl p-8 rounded-2xl shadow-lg border border-gray-100 mt-10"
     >
-      {/* Search Type Switch */}
-      <select
-        value={searchType}
-        onChange={(e) => setSearchType(e.target.value)}
-        className="border rounded px-3 py-2"
-      >
-        <option value="name">Search by Name</option>
-        <option value="location">Search by Location</option>
-      </select>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+        Find NGOs Near You
+      </h2>
 
-      {/* Input */}
-      <input
-        type="text"
-        placeholder={
-          searchType === "name" ? "Enter NGO name..." : "Enter city..."
-        }
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="border rounded px-3 py-2 w-64"
-      />
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Search Type */}
+        <select
+          value={searchType}
+          onChange={(e) => setSearchType(e.target.value)}
+          className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        >
+          <option value="name">By Name</option>
+          <option value="location">By Location</option>
+        </select>
 
-      {/* Use current location */}
+        {/* Input */}
+        <input
+          type="text"
+          placeholder={
+            searchType === "name" ? "Enter NGO name..." : "Enter city..."
+          }
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        />
+      </div>
+
+      {/* Location Button (for location mode only) */}
       {searchType === "location" && (
-        <button
+        <motion.button
           type="button"
           onClick={handleGetLocation}
-          className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full mt-4 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center justify-center space-x-2 transition-all"
         >
-          Use Current Location 📍
-        </button>
+          <MapPin className="h-5 w-5 text-primary-600" />
+          <span>Use Current Location</span>
+        </motion.button>
       )}
 
       {/* Submit */}
-      <button
+      <motion.button
         type="submit"
-        className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        className="w-full mt-6 bg-primary-600 text-white text-lg font-medium px-6 py-3 rounded-lg hover:bg-primary-700 transition-all flex items-center justify-center space-x-2"
       >
-        Search
-      </button>
+        <Search className="h-5 w-5" />
+        <span>Search NGOs</span>
+      </motion.button>
 
       {locStatus && (
-        <p className="text-sm text-gray-600 mt-2 md:mt-0">{locStatus}</p>
+        <p className="text-sm text-gray-600 text-center mt-3">{locStatus}</p>
       )}
-    </form>
+    </motion.form>
   );
 };
 

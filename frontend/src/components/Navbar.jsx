@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { Heart, LogOut, User, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import routes from "../content/routes";
 
 const Navbar = () => {
   const { user, userType, logout, isAuthenticated } = useAuth();
@@ -11,7 +12,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate(routes.home);
   };
 
   return (
@@ -69,7 +70,7 @@ const Navbar = () => {
             className="flex items-center"
             whileHover={{ scale: 1.02 }}
           >
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to={routes.home} className="flex items-center space-x-3">
               <motion.div
                 className="relative"
                 animate={{
@@ -143,9 +144,9 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6">
             {/* Enhanced Navigation Links */}
             {[
-              { to: "/", label: "Home" },
-              { to: "/find-ngos", label: "Find NGOs" },
-              { to: "/contact", label: "Contact" },
+              { to: routes.home, label: "Home" },
+              { to: routes.ngo.find, label: "Find NGOs" },
+              { to: routes.ngo.contact, label: "Contact" },
             ].map((link, index) => (
               <motion.div
                 key={link.to}
@@ -179,8 +180,8 @@ const Navbar = () => {
                   <Link
                     to={
                       userType === "ngo"
-                        ? "/ngo-dashboard"
-                        : "/volunteer-dashboard"
+                        ? routes.ngo.dash
+                        : routes.volunteer.dash
                     }
                     className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors bg-gray-50 px-3 py-2 rounded-lg hover:bg-primary-50"
                   >
