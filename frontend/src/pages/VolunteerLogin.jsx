@@ -1,56 +1,73 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Users, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { authAPI } from '../utils/api';
-import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Users, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { authAPI } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import routes from "../content/routes";
 
 const VolunteerLogin = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    location: { city: '', state: '' },
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    location: { city: "", state: "" },
     skills: [],
-    interests: []
+    interests: [],
   });
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const skillOptions = [
-    'Teaching', 'Healthcare', 'Technology', 'Marketing', 'Finance', 'Legal', 
-    'Event Management', 'Social Media', 'Writing', 'Photography', 'Design', 'Fundraising'
+    "Teaching",
+    "Healthcare",
+    "Technology",
+    "Marketing",
+    "Finance",
+    "Legal",
+    "Event Management",
+    "Social Media",
+    "Writing",
+    "Photography",
+    "Design",
+    "Fundraising",
   ];
 
   const interestOptions = [
-    'Education', 'Health', 'Animal Welfare', 'Environment', 
-    'Women Empowerment', 'Child Welfare', 'Disaster Relief', 'Poverty Alleviation'
+    "Education",
+    "Health",
+    "Animal Welfare",
+    "Environment",
+    "Women Empowerment",
+    "Child Welfare",
+    "Disaster Relief",
+    "Poverty Alleviation",
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData(prev => ({
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
-        [parent]: { ...prev[parent], [child]: value }
+        [parent]: { ...prev[parent], [child]: value },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleMultiSelect = (name, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: prev[name].includes(value) 
-        ? prev[name].filter(item => item !== value)
-        : [...prev[name], value]
+      [name]: prev[name].includes(value)
+        ? prev[name].filter((item) => item !== value)
+        : [...prev[name], value],
     }));
   };
 
@@ -63,17 +80,17 @@ const VolunteerLogin = () => {
       if (isLogin) {
         response = await authAPI.volunteerLogin({
           email: formData.email,
-          password: formData.password
+          password: formData.password,
         });
-        login(response.data.volunteer, response.data.token, 'volunteer');
+        login(response.data.volunteer, response.data.token, "volunteer");
       } else {
         response = await authAPI.volunteerRegister(formData);
-        login(response.data.volunteer, response.data.token, 'volunteer');
+        login(response.data.volunteer, response.data.token, "volunteer");
       }
-      navigate('/volunteer-dashboard');
+      navigate("/volunteer-dashboard");
     } catch (error) {
-      console.error('Authentication error:', error);
-      alert(error.response?.data?.message || 'Authentication failed');
+      console.error("Authentication error:", error);
+      alert(error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -90,10 +107,10 @@ const VolunteerLogin = () => {
         <div className="text-center mb-8">
           <Users className="h-12 w-12 text-green-600 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">
-            {isLogin ? 'Volunteer Login' : 'Join as Volunteer'}
+            {isLogin ? "Volunteer Login" : "Join as Volunteer"}
           </h2>
           <p className="text-gray-600 mt-2">
-            {isLogin ? 'Welcome back!' : 'Start making a difference today'}
+            {isLogin ? "Welcome back!" : "Start making a difference today"}
           </p>
         </div>
 
@@ -163,12 +180,15 @@ const VolunteerLogin = () => {
                   Skills (Select multiple)
                 </label>
                 <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-300 rounded-lg p-2">
-                  {skillOptions.map(skill => (
-                    <label key={skill} className="flex items-center space-x-2 text-sm">
+                  {skillOptions.map((skill) => (
+                    <label
+                      key={skill}
+                      className="flex items-center space-x-2 text-sm"
+                    >
                       <input
                         type="checkbox"
                         checked={formData.skills.includes(skill)}
-                        onChange={() => handleMultiSelect('skills', skill)}
+                        onChange={() => handleMultiSelect("skills", skill)}
                         className="rounded text-green-600"
                       />
                       <span>{skill}</span>
@@ -182,12 +202,17 @@ const VolunteerLogin = () => {
                   Interests (Select multiple)
                 </label>
                 <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border border-gray-300 rounded-lg p-2">
-                  {interestOptions.map(interest => (
-                    <label key={interest} className="flex items-center space-x-2 text-sm">
+                  {interestOptions.map((interest) => (
+                    <label
+                      key={interest}
+                      className="flex items-center space-x-2 text-sm"
+                    >
                       <input
                         type="checkbox"
                         checked={formData.interests.includes(interest)}
-                        onChange={() => handleMultiSelect('interests', interest)}
+                        onChange={() =>
+                          handleMultiSelect("interests", interest)
+                        }
                         className="rounded text-green-600"
                       />
                       <span>{interest}</span>
@@ -223,7 +248,7 @@ const VolunteerLogin = () => {
             <div className="relative">
               <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -236,7 +261,11 @@ const VolunteerLogin = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
@@ -246,7 +275,11 @@ const VolunteerLogin = () => {
             disabled={loading}
             className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Join as Volunteer')}
+            {loading
+              ? "Processing..."
+              : isLogin
+              ? "Sign In"
+              : "Join as Volunteer"}
           </button>
         </form>
 
@@ -255,12 +288,17 @@ const VolunteerLogin = () => {
             onClick={() => setIsLogin(!isLogin)}
             className="text-green-600 hover:text-green-700 font-medium"
           >
-            {isLogin ? "Don't have an account? Register here" : 'Already have an account? Sign in'}
+            {isLogin
+              ? "Don't have an account? Register here"
+              : "Already have an account? Sign in"}
           </button>
         </div>
 
         <div className="mt-4 text-center">
-          <Link to="/ngo-login" className="text-gray-600 hover:text-gray-800">
+          <Link
+            to={routes.ngo.login}
+            className="text-gray-600 hover:text-gray-800"
+          >
             Are you an NGO? Click here
           </Link>
         </div>

@@ -1,42 +1,49 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { authAPI } from '../utils/api';
-import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Heart, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { authAPI } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import routes from "../content/routes";
 
 const NGOLogin = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    category: '',
-    description: '',
-    location: { city: '', state: '' },
-    contact: { phone: '', website: '' }
+    name: "",
+    email: "",
+    password: "",
+    category: "",
+    description: "",
+    location: { city: "", state: "" },
+    contact: { phone: "", website: "" },
   });
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const categories = [
-    'Education', 'Health', 'Animal Welfare', 'Environment', 
-    'Women Empowerment', 'Child Welfare', 'Disaster Relief', 'Poverty Alleviation'
+    "Education",
+    "Health",
+    "Animal Welfare",
+    "Environment",
+    "Women Empowerment",
+    "Child Welfare",
+    "Disaster Relief",
+    "Poverty Alleviation",
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData(prev => ({
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
-        [parent]: { ...prev[parent], [child]: value }
+        [parent]: { ...prev[parent], [child]: value },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -49,17 +56,17 @@ const NGOLogin = () => {
       if (isLogin) {
         response = await authAPI.ngoLogin({
           email: formData.email,
-          password: formData.password
+          password: formData.password,
         });
-        login(response.data.ngo, response.data.token, 'ngo');
+        login(response.data.ngo, response.data.token, "ngo");
       } else {
         response = await authAPI.ngoRegister(formData);
-        login(response.data.ngo, response.data.token, 'ngo');
+        login(response.data.ngo, response.data.token, "ngo");
       }
-      navigate('/ngo-dashboard');
+      navigate(routes.ngo.dash);
     } catch (error) {
-      console.error('Authentication error:', error);
-      alert(error.response?.data?.message || 'Authentication failed');
+      console.error("Authentication error:", error);
+      alert(error.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -76,10 +83,12 @@ const NGOLogin = () => {
         <div className="text-center mb-8">
           <Heart className="h-12 w-12 text-primary-600 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900">
-            {isLogin ? 'NGO Login' : 'Register Your NGO'}
+            {isLogin ? "NGO Login" : "Register Your NGO"}
           </h2>
           <p className="text-gray-600 mt-2">
-            {isLogin ? 'Welcome back!' : 'Join our platform to connect with volunteers'}
+            {isLogin
+              ? "Welcome back!"
+              : "Join our platform to connect with volunteers"}
           </p>
         </div>
 
@@ -113,8 +122,10 @@ const NGOLogin = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Select Category</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -192,7 +203,7 @@ const NGOLogin = () => {
             <div className="relative">
               <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -205,7 +216,11 @@ const NGOLogin = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
@@ -215,7 +230,7 @@ const NGOLogin = () => {
             disabled={loading}
             className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Register NGO')}
+            {loading ? "Processing..." : isLogin ? "Sign In" : "Register NGO"}
           </button>
         </form>
 
@@ -224,12 +239,17 @@ const NGOLogin = () => {
             onClick={() => setIsLogin(!isLogin)}
             className="text-primary-600 hover:text-primary-700 font-medium"
           >
-            {isLogin ? "Don't have an account? Register here" : 'Already have an account? Sign in'}
+            {isLogin
+              ? "Don't have an account? Register here"
+              : "Already have an account? Sign in"}
           </button>
         </div>
 
         <div className="mt-4 text-center">
-          <Link to="/volunteer-login" className="text-gray-600 hover:text-gray-800">
+          <Link
+            to={routes.volunteer.login}
+            className="text-gray-600 hover:text-gray-800"
+          >
             Are you a volunteer? Click here
           </Link>
         </div>
