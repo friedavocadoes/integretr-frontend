@@ -14,6 +14,7 @@ import NGOLogin from "./pages/NGOLogin";
 import VolunteerLogin from "./pages/VolunteerLogin";
 import NGODashboard from "./pages/NGODashboard";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
+import CreateRequirement from "./pages/CreateRequirement";
 import routes from "./content/routes";
 
 // Protected Route Component
@@ -110,6 +111,15 @@ function AppContent() {
             element={
               <ProtectedRoute userType="volunteer">
                 <VolunteerDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path={routes.ngo.createRequirement}
+            element={
+              <ProtectedRoute userType="ngo">
+                <CreateRequirement />
               </ProtectedRoute>
             }
           />

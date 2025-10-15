@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Plus, Users, CheckCircle, XCircle, Clock, Edit } from 'lucide-react';
 import { ngoAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import routes from '../content/routes';
 
 const NGODashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -19,6 +21,7 @@ const NGODashboard = () => {
   });
 
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const categories = [
     'Education', 'Health', 'Animal Welfare', 'Environment', 
@@ -221,11 +224,11 @@ const NGODashboard = () => {
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold text-gray-900">Posted Requirements</h3>
                     <button
-                      onClick={() => setShowRequirementForm(true)}
+                      onClick={() => navigate(routes.ngo.createRequirement)}
                       className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2"
                     >
                       <Plus className="h-4 w-4" />
-                      <span>Post New Requirement</span>
+                      <span>Create New Requirement</span>
                     </button>
                   </div>
 

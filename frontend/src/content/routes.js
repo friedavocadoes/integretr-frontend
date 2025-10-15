@@ -6,6 +6,7 @@ export default {
     login: "/ngo-login",
     register: "/ngo-register",
     find: "/results",
+    createRequirement: "/create-requirement",
   },
   volunteer: {
     dash: "/volunteer-dashboard",
