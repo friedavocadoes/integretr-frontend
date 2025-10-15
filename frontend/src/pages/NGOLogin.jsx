@@ -58,6 +58,7 @@ const NGOLogin = () => {
           email: formData.email,
           password: formData.password,
         });
+        // backend returns { token, ngo }
         login(response.data.ngo, response.data.token, "ngo");
       } else {
         response = await authAPI.ngoRegister(formData);
@@ -66,7 +67,12 @@ const NGOLogin = () => {
       navigate(routes.ngo.dash);
     } catch (error) {
       console.error("Authentication error:", error);
-      alert(error.response?.data?.message || "Authentication failed");
+      // Support backend error shapes: { msg } or { message }
+      const serverMsg =
+        error.response?.data?.msg ||
+        error.response?.data?.message ||
+        error.message;
+      alert(serverMsg || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -103,38 +109,38 @@ const NGOLogin = () => {
           transition={{ duration: 0.6 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8"
         >
-            <div className="text-center mb-8">
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-              >
-                <Heart className="h-12 w-12 text-primary-600 mx-auto mb-4" />
-              </motion.div>
-              
-              <motion.h2
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-3xl font-bold text-gray-900"
-              >
-                {isLogin ? "NGO Login" : "Register Your NGO"}
-              </motion.h2>
-              
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-gray-600 mt-2"
-              >
-                {isLogin
-                  ? "Welcome back!"
-                  : "Join our platform to connect with volunteers"}
-              </motion.p>
-            </div>
+          <div className="text-center mb-8">
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+            >
+              <Heart className="h-12 w-12 text-primary-600 mx-auto mb-4" />
+            </motion.div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <AnimatePresence mode="wait">
+            <motion.h2
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-3xl font-bold text-gray-900"
+            >
+              {isLogin ? "NGO Login" : "Register Your NGO"}
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-gray-600 mt-2"
+            >
+              {isLogin
+                ? "Welcome back!"
+                : "Join our platform to connect with volunteers"}
+            </motion.p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <AnimatePresence mode="wait">
               {!isLogin && (
                 <motion.div
                   key="register-fields"
@@ -317,14 +323,16 @@ const NGOLogin = () => {
                   </motion.button>
                 </div>
               </motion.div>
-
             </AnimatePresence>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: isLogin ? 0.3 : 0.7 }}
-              whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)" }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)",
+              }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
@@ -336,11 +344,13 @@ const NGOLogin = () => {
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                 />
+              ) : isLogin ? (
+                "Sign In"
               ) : (
-                isLogin ? "Sign In" : "Register NGO"
+                "Register NGO"
               )}
             </motion.button>
-            </form>
+          </form>
 
           <motion.div
             initial={{ opacity: 0 }}
